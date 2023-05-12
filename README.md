@@ -9,7 +9,7 @@
 
 ## 引入
 ```
-ad_network:
+network:
     git:
       url: https://github.com/flutter-packagist/network.git
 ```
