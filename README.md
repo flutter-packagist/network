@@ -11,8 +11,7 @@
 ```
 ad_network:
     git:
-      url: https://github.com/StanleyCocos/ad_plugins.git
-      path: package/ad_network/
+      url: https://github.com/flutter-packagist/network.git
 ```
 
 ## 初始化
