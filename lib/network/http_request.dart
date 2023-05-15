@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import '../interceptor/http_request_rear_interceptor.dart';
+import '../interceptor/interceptor.dart';
 import 'http_request_setting.dart';
 import '../log/options_extra.dart';
 
@@ -13,6 +13,10 @@ typedef HttpRequestErrorCallback = void Function(
 typedef HttpRequestCommonCallback = void Function();
 
 /// 可支持 restful 请求和普通API请求
+///  restful api 格式化处理:
+///  1. url 定义 xxx/xxx/:key/xxx
+///  2. 参数 {key: value}
+///  例: /user/:userId  使用{userId: 12} 最终转化为：转换为 /user/12
 ///
 /// GET、POST、DELETE、PATCH、PUT <br>
 /// 主要作用为统一处理相关事务：<br>
@@ -41,7 +45,7 @@ class HttpRequest {
 
   Dio get client => _client!;
 
-  HttpRequestRearInterceptor? _rearInterceptor;
+  RearInterceptor? _rearInterceptor;
 
   OptionsExtra? _extra;
 
@@ -304,12 +308,11 @@ class HttpRequest {
     ProgressCallback? progressCallBack,
     CancelToken? token,
   }) async {
-    // restful api 格式化处理
-    // 例：将 /user/:userId 转换为 /user/12
+
     Map<String, dynamic> newParams = HashMap<String, dynamic>();
     params = params ?? {};
     params.forEach((key, value) {
-      if (url.indexOf(":$key") != -1) {
+      if(url.contains(":$key")){
         url = url.replaceAll(':$key', value.toString());
       } else {
         newParams.putIfAbsent(key, () => value);
