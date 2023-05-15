@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../interceptor/http_request_rear_interceptor.dart';
+import '../interceptor/interceptor.dart';
 import '../log/options_extra.dart';
 
 class HttpRequestSetting {
@@ -25,7 +25,7 @@ class HttpRequestSetting {
   final String? dev;
 
   /// 异常错误处理
-  final HttpRequestRearInterceptor? rearInterceptor;
+  final RearInterceptor? rearInterceptor;
 
   /// 日志控制
   final OptionsExtra? extra;
