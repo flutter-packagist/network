@@ -11,14 +11,19 @@ const String dioExtraEndTime = 'dio_end_time';
 const String dioExtraExpand = 'dio_expand';
 
 extension ResponseExtension on Response<dynamic> {
-  bool get isExpand => requestOptions.extra[dioExtraExpand] as bool;
+  bool get isExpand =>
+      requestOptions.extra[dioExtraExpand] is bool ? requestOptions
+          .extra[dioExtraExpand] as bool : false;
 
   set isExpand(bool value) => requestOptions.extra[dioExtraExpand] = value;
 
   int get startTimeMilliseconds =>
-      requestOptions.extra[dioExtraStartTime] as int;
+      requestOptions.extra[dioExtraStartTime] is int ? requestOptions
+          .extra[dioExtraStartTime] as int : 0;
 
-  int get endTimeMilliseconds => requestOptions.extra[dioExtraEndTime] as int;
+  int get endTimeMilliseconds =>
+      requestOptions.extra[dioExtraEndTime] is int ? requestOptions
+          .extra[dioExtraEndTime] as int : 0;
 
   DateTime get startTime =>
       DateTime.fromMillisecondsSinceEpoch(startTimeMilliseconds);
@@ -30,7 +35,10 @@ extension ResponseExtension on Response<dynamic> {
 const JsonDecoder _decoder = JsonDecoder();
 const JsonEncoder _encoder = JsonEncoder.withIndent('  ');
 
-int get _timestamp => DateTime.now().millisecondsSinceEpoch;
+int get _timestamp =>
+    DateTime
+        .now()
+        .millisecondsSinceEpoch;
 
 /// Implement a [Interceptor] to handle dio methods.
 ///
@@ -48,10 +56,8 @@ class DioLogInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(
-    Response<dynamic> response,
-    ResponseInterceptorHandler handler,
-  ) {
+  void onResponse(Response<dynamic> response,
+      ResponseInterceptorHandler handler,) {
     response.requestOptions.extra[dioExtraEndTime] = _timestamp;
     response.requestOptions.extra[dioExtraExpand] = false;
     logBoxN(getResponseLog(response));

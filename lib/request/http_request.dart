@@ -10,6 +10,8 @@ import '../adapter/dio_adapter.dart';
 import '../resolve/safe_convert.dart';
 import 'http_request_setting.dart';
 
+const String dioExtraBind = 'dio_bind';
+
 typedef OnSuccess = void Function(Map<String, dynamic> data);
 typedef OnFailed = void Function(int? stateCode, DioException? error);
 typedef OnCommon = void Function();
@@ -123,12 +125,13 @@ class HttpRequest {
     OnSuccess? onSuccess,
     OnFailed? onFailed,
     OnCommon? onCommon,
+    dynamic bind,
   }) async {
     return _client!
         .get<T>(
           _handleUrl(url, params),
           queryParameters: _handleParams(url, params),
-          options: options,
+          options: _bindCancelToken(options, bind),
           cancelToken: cancelToken,
           onReceiveProgress: onReceiveProgress,
         )
@@ -157,6 +160,7 @@ class HttpRequest {
     OnSuccess? onSuccess,
     OnFailed? onFailed,
     OnCommon? onCommon,
+    dynamic bind,
   }) async {
     String uri = _handleUrl(url, params);
     Object? data = _handleParams(url, params);
@@ -168,7 +172,7 @@ class HttpRequest {
         .post<T>(
           uri,
           data: data,
-          options: options,
+          options: _bindCancelToken(options, bind),
           cancelToken: cancelToken,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress,
@@ -197,12 +201,13 @@ class HttpRequest {
     OnSuccess? onSuccess,
     OnFailed? onFailed,
     OnCommon? onCommon,
+    dynamic bind,
   }) async {
     return _client!
         .put<T>(
           _handleUrl(url, params),
           data: _handleParams(url, params),
-          options: options,
+          options: _bindCancelToken(options, bind),
           cancelToken: cancelToken,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress,
@@ -227,12 +232,13 @@ class HttpRequest {
     OnSuccess? onSuccess,
     OnFailed? onFailed,
     OnCommon? onCommon,
+    dynamic bind,
   }) async {
     return _client!
         .head<T>(
           _handleUrl(url, params),
           data: _handleParams(url, params),
-          options: options,
+          options: _bindCancelToken(options, bind),
           cancelToken: cancelToken,
         )
         ._handleCallback(onSuccess, onFailed, onCommon);
@@ -255,12 +261,13 @@ class HttpRequest {
     OnSuccess? onSuccess,
     OnFailed? onFailed,
     OnCommon? onCommon,
+    dynamic bind,
   }) async {
     return _client!
         .delete<T>(
           _handleUrl(url, params),
           data: _handleParams(url, params),
-          options: options,
+          options: _bindCancelToken(options, bind),
           cancelToken: cancelToken,
         )
         ._handleCallback(onSuccess, onFailed, onCommon);
@@ -287,12 +294,13 @@ class HttpRequest {
     OnSuccess? onSuccess,
     OnFailed? onFailed,
     OnCommon? onCommon,
+    dynamic bind,
   }) async {
     return _client!
         .patch<T>(
           _handleUrl(url, params),
           data: _handleParams(url, params),
-          options: options,
+          options: _bindCancelToken(options, bind),
           cancelToken: cancelToken,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress,
@@ -332,13 +340,14 @@ class HttpRequest {
     OnSuccess? onSuccess,
     OnFailed? onFailed,
     OnCommon? onCommon,
+    dynamic bind,
   }) async {
     return _client!
         .download(
           _handleUrl(url, params),
           savePath,
           data: _handleParams(url, params),
-          options: options,
+          options: _bindCancelToken(options, bind),
           cancelToken: cancelToken,
           queryParameters: queryParameters,
           deleteOnError: deleteOnError,
@@ -367,6 +376,13 @@ class HttpRequest {
       String url, Map<String, dynamic>? params) {
     params?.removeWhere((key, value) => url.contains(":$key"));
     return params;
+  }
+
+  /// 绑定请求额外参数，用于页面销毁时自动取消请求
+  Options? _bindCancelToken(Options? options, dynamic bind) {
+    options ??= Options(extra: <String, dynamic>{});
+    options.extra?.putIfAbsent(dioExtraBind, () => bind);
+    return options;
   }
 }
 
