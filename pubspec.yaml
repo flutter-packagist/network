@@ -11,8 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   crypto: 3.0.3
-  connectivity_plus: 4.0.1
-  dio: 5.3.0
+  connectivity_plus: 4.0.2
+  dio: 5.3.2
   log_wrapper:
     path: ../log_wrapper
 
