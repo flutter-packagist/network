@@ -4,6 +4,9 @@ class HttpRequestSetting {
   /// 基础URL(host)
   final String baseUrl;
 
+  /// 发送超时时间
+  final int sendTimeOut;
+
   /// 连接超时时间
   final int connectTimeOut;
 
@@ -18,8 +21,9 @@ class HttpRequestSetting {
 
   HttpRequestSetting({
     this.baseUrl = "",
-    this.connectTimeOut = 20,
-    this.receiveTimeOut = 15,
+    this.sendTimeOut = 20,
+    this.connectTimeOut = 60,
+    this.receiveTimeOut = 20,
     this.contentType = "application/json",
     this.interceptors,
   });

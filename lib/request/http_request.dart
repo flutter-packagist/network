@@ -43,6 +43,7 @@ class HttpRequest {
     BaseOptions options = BaseOptions();
     options.baseUrl = setting.baseUrl;
     options.contentType = setting.contentType;
+    options.sendTimeout = Duration(seconds: setting.sendTimeOut);
     options.connectTimeout = Duration(seconds: setting.connectTimeOut);
     options.receiveTimeout = Duration(seconds: setting.receiveTimeOut);
     _client = Dio(options);
