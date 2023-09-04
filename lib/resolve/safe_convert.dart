@@ -80,10 +80,10 @@ List asList(Map<String, dynamic>? json, String key, {List? defaultValue}) {
   return toList(json[key]);
 }
 
-List asListInt(Map<String, dynamic>? json, String key, {List? defaultValue}) {
+List<int> asListInt(Map<String, dynamic>? json, String key, {List? defaultValue}) {
   return asList(json, key, defaultValue: defaultValue).map((e) => toInt(e)).toList();
 }
 
-List asListString(Map<String, dynamic>? json, String key, {List? defaultValue}) {
+List<String> asListString(Map<String, dynamic>? json, String key, {List? defaultValue}) {
   return asList(json, key, defaultValue: defaultValue).map((e) => toString(e)).toList();
 }
