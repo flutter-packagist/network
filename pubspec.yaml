@@ -14,9 +14,10 @@ dependencies:
   connectivity_plus: ^5.0.1
   dio: ^5.3.3
   log_wrapper:
-    git:
-      url: https://github.com/flutter-packagist/log_wrapper.git
-      ref: 1.0.0
+    version: 1.0.0
+    hosted:
+      name: log_wrapper
+      url: http://192.168.8.75:4000/
 
 dev_dependencies:
   flutter_test:
