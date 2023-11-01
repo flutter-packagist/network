@@ -5,9 +5,7 @@ import 'package:network/network.dart';
 /// ==============================================================
 /// 拦截器：取消网络请求
 /// ==============================================================
-final Map<dynamic, dynamic> cancelTokenMap = <dynamic, dynamic>{};
-
-class CancelTokenInterceptor extends Interceptor {
+class CancelInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     dynamic bind = options.extra[dioExtraBind];

@@ -1,6 +1,6 @@
 name: network
 description: Wrapper network request library for dio.
-version: 1.0.0
+version: 1.1.0
 homepage: https://github.com/flutter-packagist/network
 
 environment:
@@ -10,9 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  crypto: 3.0.3
-  connectivity_plus: 4.0.2
-  dio: 5.3.2
+  crypto: ^3.0.3
+  connectivity_plus: ^5.0.1
+  dio: ^5.3.3
   log_wrapper:
     git:
       url: https://github.com/flutter-packagist/log_wrapper.git

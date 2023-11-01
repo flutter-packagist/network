@@ -6,39 +6,10 @@ import 'package:log_wrapper/log/log.dart';
 /// ==============================================================
 /// 拦截器：日志打印
 /// ==============================================================
-const String dioExtraStartTime = 'dio_start_time';
-const String dioExtraEndTime = 'dio_end_time';
-const String dioExtraExpand = 'dio_expand';
-
-extension ResponseExtension on Response<dynamic> {
-  bool get isExpand =>
-      requestOptions.extra[dioExtraExpand] is bool ? requestOptions
-          .extra[dioExtraExpand] as bool : false;
-
-  set isExpand(bool value) => requestOptions.extra[dioExtraExpand] = value;
-
-  int get startTimeMilliseconds =>
-      requestOptions.extra[dioExtraStartTime] is int ? requestOptions
-          .extra[dioExtraStartTime] as int : 0;
-
-  int get endTimeMilliseconds =>
-      requestOptions.extra[dioExtraEndTime] is int ? requestOptions
-          .extra[dioExtraEndTime] as int : 0;
-
-  DateTime get startTime =>
-      DateTime.fromMillisecondsSinceEpoch(startTimeMilliseconds);
-
-  DateTime get endTime =>
-      DateTime.fromMillisecondsSinceEpoch(endTimeMilliseconds);
-}
-
 const JsonDecoder _decoder = JsonDecoder();
 const JsonEncoder _encoder = JsonEncoder.withIndent('  ');
 
-int get _timestamp =>
-    DateTime
-        .now()
-        .millisecondsSinceEpoch;
+int get _timestamp => DateTime.now().millisecondsSinceEpoch;
 
 /// Implement a [Interceptor] to handle dio methods.
 ///
@@ -47,19 +18,20 @@ int get _timestamp =>
 ///  - Add [dioExtraStartTime] when a request was requested.
 ///  - Add [dioExtraEndTime] when a response is respond or thrown an error.
 ///  - Deliver the [Response] to the container.
-class DioLogInterceptor extends Interceptor {
+class LogInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    options.extra[dioExtraStartTime] = _timestamp;
+    options.startTimeMilliseconds = _timestamp;
     logBoxN(getRequestLog(options));
     handler.next(options);
   }
 
   @override
-  void onResponse(Response<dynamic> response,
-      ResponseInterceptorHandler handler,) {
-    response.requestOptions.extra[dioExtraEndTime] = _timestamp;
-    response.requestOptions.extra[dioExtraExpand] = false;
+  void onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
+    response.requestOptions.endTimeMilliseconds = _timestamp;
     logBoxN(getResponseLog(response));
     handler.next(response);
   }
@@ -68,8 +40,7 @@ class DioLogInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     // Create an empty response with the [RequestOptions] for delivery.
     var response = Response<dynamic>(requestOptions: err.requestOptions);
-    response.requestOptions.extra[dioExtraEndTime] = _timestamp;
-    response.requestOptions.extra[dioExtraExpand] = false;
+    response.requestOptions.endTimeMilliseconds = _timestamp;
     logBoxE(getResponseLog(response));
     logBoxE(err);
     handler.next(err);
@@ -116,10 +87,11 @@ class DioLogInterceptor extends Interceptor {
   String getResponseLog(Response<dynamic> response) {
     RequestOptions request = response.requestOptions;
     StringBuffer sb = StringBuffer();
-    sb.write("请求时间：${response.startTime}\n");
+    sb.write("请求时间：${response.requestOptions.startTime}\n");
     sb.write("请求链接：${request.uri}\n");
     sb.write("请求方式：${request.method}\n");
-    Duration duration = response.endTime.difference(response.startTime);
+    Duration duration = response.requestOptions.endTime
+        .difference(response.requestOptions.startTime);
     sb.write("请求时长：${duration.inMilliseconds}ms\n");
     sb.write("状态码：${response.statusCode ?? 0}\n\n");
     if (request.headers.isNotEmpty) {
@@ -181,4 +153,23 @@ class DioLogInterceptor extends Interceptor {
 
     return sb.toString();
   }
+}
+
+extension RequestOptionsLog on RequestOptions {
+  static const _kStartTime = 'dio_start_time';
+  static const _kEndTime = 'dio_end_time';
+
+  int get startTimeMilliseconds => extra[_kStartTime] ?? 0;
+
+  set startTimeMilliseconds(int value) => extra[_kStartTime] = value;
+
+  int get endTimeMilliseconds => extra[_kEndTime] ?? 0;
+
+  set endTimeMilliseconds(int value) => extra[_kEndTime] = value;
+
+  DateTime get startTime =>
+      DateTime.fromMillisecondsSinceEpoch(startTimeMilliseconds);
+
+  DateTime get endTime =>
+      DateTime.fromMillisecondsSinceEpoch(endTimeMilliseconds);
 }
