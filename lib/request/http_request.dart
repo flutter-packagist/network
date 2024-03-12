@@ -382,7 +382,8 @@ class HttpRequest {
   /// 绑定请求额外参数，用于页面销毁时自动取消请求
   Options? _bindCancelToken(Options? options, dynamic bind) {
     options ??= Options(extra: <String, dynamic>{});
-    options.extra?.putIfAbsent(dioExtraBind, () => bind);
+    options.extra ??= <String, dynamic>{};
+    options.extra!.putIfAbsent(dioExtraBind, () => bind);
     return options;
   }
 }
