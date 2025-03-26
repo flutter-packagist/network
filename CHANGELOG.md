@@ -1,3 +1,7 @@
+## 1.2.4
+
+* feat: 依赖库升级
+
 ## 1.2.3
 
 * fixed: HttpRequest请求的Future值不返回数据
